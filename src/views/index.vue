@@ -6,8 +6,8 @@
                     <ion-button>
                         上传数据
                     </ion-button>
-                    <ion-button>
-                        下载数据
+                    <ion-button @click="download">
+                        <ion-spinner v-if="downloading"/>下载数据
                     </ion-button>
                 </ion-item>
             </ion-toolbar>
@@ -93,7 +93,7 @@
 import { IonPage, IonHeader, IonContent, IonToolbar, IonCard, IonCardContent, IonCardHeader } from '@ionic/vue';
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { create, trash, push } from 'ionicons/icons';
-import { getEntity, saveEntity } from '@/api/api'
+import { getEntity, downEntity, saveEntity } from '@/api/api'
 
 export default defineComponent({
   name: 'App',
@@ -103,6 +103,26 @@ export default defineComponent({
   setup() {
       const data=ref(null)
       const saving=ref(false)
+      const downloading=ref(false)
+      const download = async()=>{
+          if (!downloading.value){
+              downloading.value = true
+          const res: any = await downEntity()
+          downloading.value = false
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res));
+        element.setAttribute('download', 'train.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        
+        element.click();
+        
+        document.body.removeChild(element);
+          }
+          
+
+      }
       const save = (item: any)=>{
           if (item.editEl){
               item.sentence=item.editEl.innerHTML
@@ -159,7 +179,9 @@ export default defineComponent({
           save,
           saving,
           saveData,
-          labelChange
+          labelChange,
+          download,
+          downloading
       }
   }
 })
