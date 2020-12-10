@@ -1,8 +1,9 @@
 import request from '@/utils/request'
 
-export const getEntity=()=>request({
+export const getEntity=(params: any)=>request({
     url: "test1.php",
-    method: 'get'
+    method: 'get',
+    params
   })
 export const saveEntity=(data: any)=>request({
     url: "save.php",

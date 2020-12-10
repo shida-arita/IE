@@ -34,11 +34,12 @@
                         </ion-label>
                     </ion-item>
                     <ion-item lines="none">
-                        <ion-label slot="start">
+                        <ion-label>
                             关系：
                         </ion-label>
-                        <ion-label color="medium" style="width:5em">
-                            <ion-select @ionChange="labelChange($event)" v-if="data" :value="data.flag[2]" ok-text="确定" cancel-text="取消">
+                        <ion-label v-if="data" color="medium">{{map[data.flag[2]]}}</ion-label>
+                        <ion-label color="medium">
+                            <ion-select  @ionChange="labelChange($event)" v-if="data" :value="data.flag[2]" ok-text="确定" cancel-text="取消">
                                 <ion-select-option  value="C">主席/首领</ion-select-option>
                                 <ion-select-option  value="E">雇员</ion-select-option>
                                 <ion-select-option  value="L">位置</ion-select-option>
@@ -53,7 +54,7 @@
 
                 <ion-card v-for="item in data.list" :key="item.ID">
                     <ion-card-header>
-                        <ion-chip v-if="item.valid!=='1'" color="success">
+                        <ion-chip v-if="item.valid%2===0" color="success">
                             状态：启用
                         </ion-chip>
                         <ion-chip v-else>
@@ -64,20 +65,33 @@
                         <ion-item>
                             <ion-textarea autoGrow placeholder="请输入句子内容" @input="item.editEl=$event.target" :readonly="!item.edit" :disabled="!item.edit" :value="item.sentence"/>
                         </ion-item>
+                        <template v-if="item.origin!=='1'">
                         <ion-item v-if="!item.edit" lines="none">
-                            <ion-button v-if="item.valid==='1'" @click="item.valid='2'"><ion-icon :icon="push"/>启用</ion-button>
-                            <ion-button v-else @click="item.valid='1'"><ion-icon :icon="trash"/>撤回</ion-button>
+                            <ion-button v-if="item.valid%2===1" @click="item.valid=data.flag[3]+2"><ion-icon :icon="push"/>启用</ion-button>
+                            <ion-button v-else @click="item.valid=data.flag[3]+1"><ion-icon :icon="trash"/>撤回</ion-button>
                             <ion-button @click="item.edit=true"><ion-icon :icon="create"/>编辑</ion-button>
                         </ion-item>
                         <ion-item v-else lines="none">
                                 <ion-button @click="item.edit=false"><ion-icon :icon="create"/>取消</ion-button>
                                 <ion-button @click="save(item)"><ion-icon :icon="create"/>保存</ion-button>
                         </ion-item>
+                        </template>
                     </ion-card-content>
                 </ion-card>
             </ion-list>
-            <ion-button @click="saveData" :disabled="saving" expand="block"><ion-spinner v-if="saving"/>标记已阅并刷新本页</ion-button>
         </ion-content>
+        <ion-footer>
+            <ion-toolbar>
+                <ion-row>
+                    <ion-col :size="6" v-if="history.length">
+                        <ion-button @click="goBack" color="light" expand="block">回到上一组</ion-button>
+                    </ion-col>
+                    <ion-col :size="history.length?6:12" >
+                        <ion-button  @click="saveData" :disabled="saving" expand="block"><ion-spinner v-if="saving"/>标记已阅并刷新</ion-button>
+                    </ion-col>
+                </ion-row>
+            </ion-toolbar>
+        </ion-footer>
     </ion-page>
 </template>
 <style scoped>
@@ -90,7 +104,7 @@
 }
 </style>
 <script lang="ts">
-import { IonPage, IonHeader, IonContent, IonToolbar, IonCard, IonCardContent, IonCardHeader } from '@ionic/vue';
+import { IonPage, IonHeader, IonContent, IonToolbar, IonFooter, IonCard, IonCardContent, IonCardHeader } from '@ionic/vue';
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
 import { create, trash, push } from 'ionicons/icons';
 import { getEntity, downEntity, saveEntity } from '@/api/api'
@@ -98,12 +112,19 @@ import { getEntity, downEntity, saveEntity } from '@/api/api'
 export default defineComponent({
   name: 'App',
   components: {
-      IonPage, IonHeader, IonContent, IonToolbar, IonCard, IonCardContent, IonCardHeader 
+      IonPage, IonHeader, IonContent, IonToolbar, IonFooter, IonCard, IonCardContent, IonCardHeader 
   },
   setup() {
       const data=ref(null)
       const saving=ref(false)
       const downloading=ref(false)
+      const history=ref([])
+      const map={
+          'C':'主席/首领',
+          'E':'雇员',
+          'L':'位置',
+          'N':'无关系'
+      }
       const download = async()=>{
           if (!downloading.value){
               downloading.value = true
@@ -129,6 +150,19 @@ export default defineComponent({
           }
           item.edit = false
       }
+      const goBack = async ()=>{
+          if (data.value) {
+            const tempFlag: Array<any> = ((history.value).pop() as any)
+            data.value = null
+            const res: any = await getEntity({'e1':tempFlag[0], 'e2':tempFlag[1], 'label':tempFlag[2], 'valid':tempFlag[3]})
+            if (res.flag) {
+                data.value = {
+                    list: res.data,
+                    flag: res.flag
+                } as any
+            }
+          }
+      }
       const test = (item: any)=>{
           if (item.editEl){
               item.sentence=item.editEl.innerHTML
@@ -136,7 +170,7 @@ export default defineComponent({
           
       }
       const getData = async()=>{
-          const res: any = await getEntity()
+          const res: any = await getEntity({})
           saving.value=false;
           if (res.flag) {
               data.value = {
@@ -151,11 +185,11 @@ export default defineComponent({
               const list=(data.value as any).list
               const uploadList = []
               for (let i=0;i<list.length;i++) {
-                  uploadList.push([list[i].ID, (list[i].valid!=='1')?'2':'1', list[i].sentence]);
+                  uploadList.push([list[i].ID, (list[i].valid===(data.value as any).flag[3])?(list[i].valid+2):list[i].valid, list[i].sentence]);
               }
               console.log(uploadList, (data.value as any).flag[2])
-              const res: any = await saveEntity({list:uploadList, label:(data.value as any).flag[2]})
-
+              const res: any = await saveEntity({list:uploadList, label:(data.value as any).flag[2]});
+                (history.value as any).push((data.value as any).flag)
               if (res.code) {
                   getData()
               }
@@ -181,7 +215,10 @@ export default defineComponent({
           saveData,
           labelChange,
           download,
-          downloading
+          downloading,
+          history,
+          goBack,
+          map
       }
   }
 })
