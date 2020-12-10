@@ -1,8 +1,7 @@
 import axios from 'axios'
-import store from '@/store'
 
 const service = axios.create({
-  baseURL: 'https://alumni-dev.uchaindb.cn/client/', // url = base url + request url
+  baseURL: 'http://62.60.131.37/', // url = base url + request url
   timeout:20000
   // withCredentials: true // send cookies when cross-domain requests
 })
@@ -10,10 +9,6 @@ const service = axios.create({
 // Request interceptors
 service.interceptors.request.use(
   (config) => {
-    // Add X-Access-Token header to every request, you can add other custom headers here
-    if (store.getters.getToken) {
-      config.headers['Authorization'] = "Bearer "+store.getters.getToken
-    }
     return config
   },
   (error) => {
