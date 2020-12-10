@@ -1,0 +1,43 @@
+name: Deploy on GitHub Pages
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+    - name: Install and Build
+      run: |
+          yarn
+          yarn build
+    - name: Archive build dist
+      uses: actions/upload-artifact@v2
+      with:
+        name: dist
+        path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    steps:
+    - name: Download dist
+      uses: actions/download-artifact@v2
+      with:
+        name: dist
+        path: dist
+    - name: Deploy
+      uses: maxheld83/ghpages@v0.2.1
+      env:
+        BUILD_DIR: dist/
+        GH_PAT: ${{ secrets.ACCESS_TOKEN }}
