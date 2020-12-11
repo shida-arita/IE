@@ -62,7 +62,7 @@
                             状态：弃用
                         </ion-chip>
 
-                        <ion-chip v-if="item.origin!=='1'"  color="primary">
+                        <ion-chip v-if="item.origin==='1'" color="primary">
                             原有数据
                         </ion-chip>
                     </ion-card-header>
