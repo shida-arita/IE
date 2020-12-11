@@ -57,15 +57,19 @@
                         <ion-chip v-if="item.valid%2===0" color="success">
                             状态：启用
                         </ion-chip>
+                        
                         <ion-chip v-else>
                             状态：弃用
+                        </ion-chip>
+
+                        <ion-chip v-if="item.origin!=='1'"  color="primary">
+                            原有数据
                         </ion-chip>
                     </ion-card-header>
                     <ion-card-content>
                         <ion-item>
                             <ion-textarea autoGrow placeholder="请输入句子内容" @input="item.editEl=$event.target" :readonly="!item.edit" :disabled="!item.edit" :value="item.sentence"/>
                         </ion-item>
-                        <template v-if="item.origin!=='1'">
                         <ion-item v-if="!item.edit" lines="none">
                             <ion-button v-if="item.valid%2===1" @click="item.valid=data.flag[3]+2"><ion-icon :icon="push"/>启用</ion-button>
                             <ion-button v-else @click="item.valid=data.flag[3]+1"><ion-icon :icon="trash"/>撤回</ion-button>
@@ -75,7 +79,6 @@
                                 <ion-button @click="item.edit=false"><ion-icon :icon="create"/>取消</ion-button>
                                 <ion-button @click="save(item)"><ion-icon :icon="create"/>保存</ion-button>
                         </ion-item>
-                        </template>
                     </ion-card-content>
                 </ion-card>
             </ion-list>
