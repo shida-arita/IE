@@ -27,6 +27,11 @@
                     <ion-icon :icon="search"/>
                     {{stateInfo}}
                 </ion-item>
+                <ion-item style="font-size:0.8em;" v-else>
+                    <ion-label slot="start">当前搜索位置：</ion-label>
+                    <ion-input :value="searchPL" @ionChange="searchPL=parseInt($event.detail.value)" type="number"></ion-input>
+                    <ion-label slot="end">[{{entityList[searchPL][0]+','+entityList[searchPL][1]}}]</ion-label>
+                </ion-item>
             </ion-toolbar>
         </ion-header>
         <ion-content>
@@ -217,7 +222,7 @@ export default defineComponent({
                 if (data) {
                     let arr = reg.exec(data)
                         while (arr!==null){
-                            const formatStr=arr[0].replace(item[0],'')
+                            const formatStr=arr[0].replace(item[0],'').replace(/ /g,"")
                             if(formatStr.match(item[1])&&formatStr!=item[1]&&(!arr[0].match(/为您推荐/))){
                                 (state.resultList as any).push({
                                     entity1: item[0],
