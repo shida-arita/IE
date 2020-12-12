@@ -10,6 +10,7 @@
                         <ion-spinner v-if="downloading"/>下载数据
                     </ion-button>
                     <ion-buttons slot="end" >
+                        <ion-button @click="toPic">Shida</ion-button>
                         <ion-button @click="toSearch"><ion-icon :icon="search" /></ion-button>
                     </ion-buttons>
                 </ion-item>
@@ -130,6 +131,9 @@ export default defineComponent({
       const toSearch=()=>{
           router.push('/search')
       }
+      const toPic=()=>{
+          router.push('/pic')
+      }
       const map={
           'C':'主席/首领',
           'E':'雇员',
@@ -231,7 +235,8 @@ export default defineComponent({
           goBack,
           map,
           search,
-          toSearch
+          toSearch,
+          toPic
       }
   }
 })
