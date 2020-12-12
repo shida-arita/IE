@@ -101,7 +101,7 @@
                         <ion-spinner/>保存中
                     </ion-title>
                 </ion-item>
-                <ion-item @click="reset" v-else-if="inState===4" lines="none" button>
+                <ion-item @click="inState=2" v-else-if="inState===4" lines="none" button>
                     <ion-title color="success" style="text-align:center">
                         返回搜索界面
                     </ion-title>
