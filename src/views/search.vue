@@ -202,7 +202,7 @@ export default defineComponent({
                                         entity1: item[0],
                                         entity2: item[1],
                                         label: item[2],
-                                        sentence: arr[0].replace(/ /g,"").replace(/^[^0-9\u4e00-\u9fa5]+/,"").replace(/[^0-9\u4e00-\u9fa5）》]+$/,""),
+                                        sentence: arr[0].replace(/ /g,"").replace(/^[^0-9\u4e00-\u9fa5“]+/,"").replace(/[^0-9\u4e00-\u9fa5）》”]+$/,""),
                                         checked: true
                                 })
                             }
@@ -213,8 +213,22 @@ export default defineComponent({
             } else {
                 const res: any = await getData(state.url.replace(/{entity1}/g, item[0]).replace(/{entity2}/g, item[1]))
                 const data = dataFormat(res)
+                const reg= RegExp(re+"+"+item[0]+re+"*|"+re+"*"+item[0]+re+"+","g")
                 if (data) {
-                    continue
+                    let arr = reg.exec(data)
+                        while (arr!==null){
+                            const formatStr=arr[0].replace(item[0],'')
+                            if(formatStr.match(item[1])&&formatStr!=item[1]&&(!arr[0].match(/为您推荐/))){
+                                (state.resultList as any).push({
+                                    entity1: item[0],
+                                    entity2: item[1],
+                                    label: item[2],
+                                    sentence: arr[0].replace(/ /g,"").replace(/^[^0-9\u4e00-\u9fa5“]+/,"").replace(/[^0-9\u4e00-\u9fa5）》”]+$/,""),
+                                    checked: true
+                                })
+                            }
+                            arr = reg.exec(data)
+                        }
                 }
             }
                 
