@@ -228,6 +228,7 @@ export default defineComponent({
           fonts,
           icons,
           save,
+          removeUrl,
           ...toRefs(state)
       }
   }
