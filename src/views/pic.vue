@@ -86,18 +86,26 @@
                     </ion-select-option>
                 </ion-select>
             </ion-item>
+            <ion-item lines="none">
+                <ion-label>授权店铺名：</ion-label>
+                <ion-input @ionChange="name=$event.detail.value" placeholder="请输入店铺名"/>
+            </ion-item>
         <div id="board" class="background" :style="'background:'+boColor">
-        <ion-card class="card" :style="'--background:'+bColor+';border-radius:'+radius+'px'">
-            <img :style="{opacity:opacity}" @load="removeUrl" v-if="imgUrl" class="cardPic" :src="imgUrl"/>
-            <ion-card-header>
-                <ion-card-title>
-                    <h1 :style="'font-family:'+tFont+';color:'+tColor+';font-size:'+tSize+'px;'+(tShadow?'text-shadow:2px 2px 3px #8696a7;':'')+(tWeight?'font-weight: bold;':'')">{{title}}</h1>
-                </ion-card-title>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-label :style="'height:'+cSize*1.6+'px'" v-for="(item,idx) in list" :key="idx" ><h2 :style="'font-family:'+cFont+';color:'+cColor+';font-size:'+cSize+'px'"><ion-icon style="margin-right:0.4em" :icon="icon"/>{{item}}</h2></ion-label>
-            </ion-card-content>
-        </ion-card>
+            <ion-card class="card" :style="'--background:'+bColor+';border-radius:'+radius+'px'">
+                <img :style="{opacity:opacity}" @load="removeUrl" v-if="imgUrl" class="cardPic" :src="imgUrl"/>
+                <ion-card-header>
+                    <ion-card-title>
+                        <h1 :style="'font-family:'+tFont+';color:'+tColor+';font-size:'+tSize+'px;'+(tShadow?'text-shadow:2px 2px 3px #8696a7;':'')+(tWeight?'font-weight: bold;':'')">{{title}}</h1>
+                    </ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                    <ion-label :style="'height:'+cSize*1.6+'px'" v-for="(item,idx) in list" :key="idx" ><h2 :style="'font-family:'+cFont+';color:'+cColor+';font-size:'+cSize+'px'"><ion-icon style="margin-right:0.4em" :icon="icon"/>{{item}}</h2></ion-label>
+                </ion-card-content>
+                <div class="shuiyin">
+                    <img class="icon" src='http://62.60.131.37/shida.jpg'/>
+                    <span style="position:absolute;left:80px;line-height:60px;white-space:nowrap">授权销售：{{name}}</span>
+                </div>
+            </ion-card>
         </div>
     </ion-content>
     <ion-footer>
@@ -133,6 +141,26 @@
     height:340px;
     width:340px;
     object-fit: cover;
+}
+.icon{
+    margin:10px 20px;
+    height:40px;
+    width: 40px;
+    border-radius: 20px;
+}
+.shuiyin{
+    position: absolute;
+    bottom:0;
+    right:0;
+    width:100%;
+    background:#fff;
+    height:60px;
+    color:#888;
+    opacity: 0.4;
+    font-size:16px;
+    font-style:italic;
+    font-family: 'Monospace', serif;
+    font-weight: bold;
 }
 .textC{
     text-align:center;
@@ -181,11 +209,12 @@ export default defineComponent({
           cSize:30,
           cFont:'SimHei',
           list:[],
+          name:'',
           icon:starSharp,
           radius:30
       })
       const colors = [
-          '#c1cbd7','#afb0b2','#969391','#bfbfbf','#8696a7','#9ca8b8','#fffaf4'
+          '#c1cbd7','#afb0b2','#969391','#bfbfbf','#8696a7','#9ca8b8','#fffaf4','#e0e5df','#b5c4b1','#ecacea','#7b8b6f','#e0cdcf','#b7b1a5','#965454','#faead3'
       ]
       const sizes = [ 40, 38, 36, 34, 32, 30, 28, 26, 24, 22, 20, 18, 16]
       const fonts = [
