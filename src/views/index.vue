@@ -9,6 +9,9 @@
                     <ion-button @click="download">
                         <ion-spinner v-if="downloading"/>下载数据
                     </ion-button>
+                    <ion-buttons slot="end" >
+                        <ion-button @click="toSearch"><ion-icon :icon="search" /></ion-button>
+                    </ion-buttons>
                 </ion-item>
             </ion-toolbar>
         </ion-header>
@@ -109,8 +112,9 @@
 <script lang="ts">
 import { IonPage, IonHeader, IonContent, IonToolbar, IonFooter, IonCard, IonCardContent, IonCardHeader } from '@ionic/vue';
 import { defineComponent, onMounted, onUnmounted, ref } from 'vue';
-import { create, trash, push } from 'ionicons/icons';
+import { create, trash, push, search } from 'ionicons/icons';
 import { getEntity, downEntity, saveEntity } from '@/api/api'
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'App',
@@ -118,10 +122,14 @@ export default defineComponent({
       IonPage, IonHeader, IonContent, IonToolbar, IonFooter, IonCard, IonCardContent, IonCardHeader 
   },
   setup() {
+      const router= useRouter()
       const data=ref(null)
       const saving=ref(false)
       const downloading=ref(false)
       const history=ref([])
+      const toSearch=()=>{
+          router.push('/search')
+      }
       const map={
           'C':'主席/首领',
           'E':'雇员',
@@ -221,7 +229,9 @@ export default defineComponent({
           downloading,
           history,
           goBack,
-          map
+          map,
+          search,
+          toSearch
       }
   }
 })

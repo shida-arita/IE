@@ -4,6 +4,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: () => import('@/views/index.vue'),
+  },
+  {
+    path: '/search',
+    component: () => import('@/views/search.vue'),
   }
 ]
 const router = createRouter({

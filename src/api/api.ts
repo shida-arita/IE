@@ -5,8 +5,23 @@ export const getEntity=(params: any)=>request({
     method: 'get',
     params
   })
+  export const getData=(u: string)=>request({
+    url:"testL.php",
+    method: 'get',
+    params:{ url:u }
+  })
+  export const getEntityL=(params: any)=>request({
+    url: "testE.php",
+    method: 'get',
+    params
+  })
 export const saveEntity=(data: any)=>request({
     url: "save.php",
+    method: 'post',
+    data
+  })
+  export const upload=(data: any)=>request({
+    url: "upload2.php",
     method: 'post',
     data
   })
