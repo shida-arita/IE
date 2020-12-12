@@ -45,8 +45,8 @@
             </ion-list>
             <ion-list v-else>
                 <ion-item>
-                    <ion-label>成功数量：{{uploadRes.successNum}}</ion-label>
-                    <ion-label>失败数量：{{uploadRes.failNum}}</ion-label>
+                    <ion-label>成功数量：{{uploadRes.success}}</ion-label>
+                    <ion-label>失败数量：{{uploadRes.fail}}</ion-label>
                 </ion-item>
                 <ion-card v-for="(item,idx) in uploadRes.failList" :key="idx">
                     <ion-card-header>
