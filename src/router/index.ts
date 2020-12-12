@@ -8,6 +8,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/search',
     component: () => import('@/views/search.vue'),
+  },
+  {
+    path: '/pic',
+    component: () => import('@/views/pic.vue'),
   }
 ]
 const router = createRouter({

@@ -74,21 +74,21 @@
                     </ion-title>
                 </ion-item>
                 <ion-row v-else-if="inState===2">
-                    <ion-col>
-                    <ion-item @click="start" v-if="searchPL<entityList.length" lines="none" button>
+                    <ion-col v-if="searchPL<entityList.length" size="4">
+                    <ion-item @click="start"  lines="none" button>
                         <ion-title color="success" style="text-align:center">
                             继续搜索
                         </ion-title>
                     </ion-item>
                     </ion-col>
-                    <ion-col>
+                    <ion-col :size="searchPL<entityList.length?4:6">
                     <ion-item lines="none" button>
                         <ion-title @click="add" color="primary" style="text-align:center">
                             添加选中
                         </ion-title>
                     </ion-item>
                     </ion-col>
-                    <ion-col>
+                    <ion-col :size="searchPL<entityList.length?4:6">
                     <ion-item @click="()=>{searchPL=0;start()}" lines="none" button>
                         <ion-title color="medium" style="text-align:center">
                             重新搜索
