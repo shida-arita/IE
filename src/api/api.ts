@@ -8,7 +8,7 @@ export const getEntity=(params: any)=>request({
   export const getData=(u: string)=>request({
     url:"testL.php",
     method: 'get',
-    params:{ url:u }
+    params:{ url:encodeURI(u) }
   })
   export const getEntityL=(params: any)=>request({
     url: "testE.php",

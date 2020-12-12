@@ -89,7 +89,7 @@
                     </ion-item>
                     </ion-col>
                     <ion-col :size="searchPL<entityList.length?4:6">
-                    <ion-item @click="()=>{searchPL=0;start()}" lines="none" button>
+                    <ion-item @click="reset" lines="none" button>
                         <ion-title color="medium" style="text-align:center">
                             重新搜索
                         </ion-title>
