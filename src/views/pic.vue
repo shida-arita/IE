@@ -1,8 +1,15 @@
 <template>
 <ion-page>
     <ion-header>
-        <ion-toolbar color="primary">
-            <ion-title class="textC">封面图片生成</ion-title>
+        <ion-toolbar>
+            <ion-segment>
+                <ion-segment-button>
+                    封面图片生成
+                </ion-segment-button>
+                <ion-segment-button>
+                    二维码生成
+                </ion-segment-button>
+            </ion-segment>
         </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -65,7 +72,7 @@
                 <ion-button @click="list=content.match(/;/)?content.split(';'):content.split('；')" slot="end" expand="full" color="primary">应用</ion-button>
             </ion-item>
             <ion-item>
-                <ion-select @ionChange="cColor=$event.detail.value" :value="cColor" placeholder="颜色">
+                <ion-select :style="'background:'+cColor" @ionChange="cColor=$event.detail.value" :value="cColor" placeholder="颜色">
                     <ion-select-option v-for="(color,idx) in colors" :key="idx" :value="color">
                         {{color}}
                     </ion-select-option>
@@ -93,9 +100,9 @@
         <div id="board" class="background" :style="'background:'+boColor">
             <ion-card class="card" :style="'--background:'+bColor+';border-radius:'+radius+'px'">
                 <img :style="{opacity:opacity}" @load="removeUrl" v-if="imgUrl" class="cardPic" :src="imgUrl"/>
-                <ion-card-header>
+                <ion-card-header class="cardHeader">
                     <ion-card-title>
-                        <h1 :style="'font-family:'+tFont+';color:'+tColor+';font-size:'+tSize+'px;'+(tShadow?'text-shadow:2px 2px 3px #8696a7;':'')+(tWeight?'font-weight: bold;':'')">{{title}}</h1>
+                        <h1 :style="'font-family:\''+tFont+'\',sans-serif;color:'+tColor+';font-size:'+tSize+'px;'+(tShadow?'text-shadow:2px 2px 3px #8696a7;':'')+(tWeight?'font-weight: bold;':'')">{{title}}</h1>
                     </ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
@@ -132,6 +139,9 @@
     width:340px;
     margin:0;
 }
+.cardHeader{
+    padding-bottom:0
+}
 .cardPic{
     position: absolute;
     top:0;
@@ -159,7 +169,7 @@
     opacity: 0.4;
     font-size:16px;
     font-style:italic;
-    font-family: 'Monospace', serif;
+    font-family: 'Monospace', sans-serif;
     font-weight: bold;
 }
 .textC{
