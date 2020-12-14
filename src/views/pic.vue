@@ -2,17 +2,17 @@
 <ion-page>
     <ion-header>
         <ion-toolbar>
-            <ion-segment>
-                <ion-segment-button>
+            <ion-segment @ionChange="nowTab=$event.target.value" :value="nowTab">
+                <ion-segment-button value="poster">
                     封面图片生成
                 </ion-segment-button>
-                <ion-segment-button>
+                <ion-segment-button value="qrcode">
                     二维码生成
                 </ion-segment-button>
             </ion-segment>
         </ion-toolbar>
     </ion-header>
-    <ion-content>
+    <ion-content v-if="nowTab==='poster'">
         <ion-item lines>
             <ion-label>边框：</ion-label>
             <ion-select :style="'background:'+boColor" @ionChange="boColor=$event.detail.value" :value="boColor" placeholder="颜色">
@@ -106,7 +106,7 @@
                     </ion-card-title>
                 </ion-card-header>
                 <ion-card-content>
-                    <ion-label :style="'height:'+cSize*1.6+'px'" v-for="(item,idx) in list" :key="idx" ><h2 :style="'font-family:'+cFont+';color:'+cColor+';font-size:'+cSize+'px'"><ion-icon style="margin-right:0.4em" :icon="icon"/>{{item}}</h2></ion-label>
+                    <ion-label :style="'height:'+cSize*1.6+'px'" v-for="(item,idx) in list" :key="idx" ><h2 :style="'font-family:'+cFont+';color:'+cColor+';font-size:'+cSize+'px'"><ion-icon style="margin-right:0.4em" :icon="iconList[icon]"/>{{item}}</h2></ion-label>
                 </ion-card-content>
                 <div class="shuiyin">
                     <img class="icon" src='http://62.60.131.37/shida.jpg'/>
@@ -116,8 +116,8 @@
         </div>
     </ion-content>
     <ion-footer>
-        <ion-item @click="save" button color="primary">
-            <ion-title class="textC" >保存图片</ion-title>
+        <ion-item @click="saveoption" button color="primary">
+            <ion-title class="textC" >保存内容</ion-title>
         </ion-item>
     </ion-footer>
 </ion-page>
@@ -196,16 +196,16 @@ import { starSharp, checkmarkCircle, flashSharp, thumbsUpSharp } from 'ionicons/
 import { getEntity, downEntity, saveEntity } from '@/api/api'
 import { useRouter } from 'vue-router';
 import html2canvas from "html2canvas"
-
+import { setOptions, getOptions } from "@/utils/cookies"
 export default defineComponent({
   name: 'App',
   components: {
       IonCard, IonCardContent, IonCardHeader, IonPage, IonContent, IonHeader
   },
   setup() {
-      const state = reactive({
+      const cookieState = getOptions()
+      let stateObj = {
           title:'明日之后钢琴辅助',
-          imgUrl:'',
           opacity:0.4,
           content:'',
           tColor:'#fffaf4',
@@ -220,9 +220,15 @@ export default defineComponent({
           cFont:'SimHei',
           list:[],
           name:'',
-          icon:starSharp,
+          icon:'starSharp',
           radius:30
-      })
+      }
+      if (cookieState){
+          stateObj = JSON.parse(cookieState)
+      }
+      const state = reactive(stateObj)
+      const nowTab=ref('poster')
+      const imgUrl=ref('')
       const colors = [
           '#c1cbd7','#afb0b2','#969391','#bfbfbf','#8696a7','#9ca8b8','#fffaf4','#e0e5df','#b5c4b1','#ecacea','#7b8b6f','#e0cdcf','#b7b1a5','#965454','#faead3'
       ]
@@ -234,15 +240,24 @@ export default defineComponent({
           {label:'仿宋',value:'FangSong'}
       ]
       const icons = [
-          {label:'星星',value:starSharp},
-          {label:'勾',value:checkmarkCircle},
-          {label:'闪电',value:flashSharp},
-          {label:'赞',value:thumbsUpSharp}
+          {label:'星星',value:'starSharp'},
+          {label:'勾',value:'checkmarkCircle'},
+          {label:'闪电',value:'flashSharp'},
+          {label:'赞',value:'thumbsUpSharp'}
       ]
+      const saveoption = ()=>{
+          setOptions(JSON.stringify(state))
+      }
+      const iconList = {
+          starSharp,
+          checkmarkCircle,
+          flashSharp,
+          thumbsUpSharp
+      }
       const chooseImg = (file: any)=>{
         const URL = window.URL || window.webkitURL
         if (URL) {
-            state.imgUrl=URL.createObjectURL(file.target.files[0])
+           imgUrl.value=URL.createObjectURL(file.target.files[0])
         }
       }
       const save = ()=>{
@@ -257,7 +272,7 @@ export default defineComponent({
       const removeUrl = ()=>{
         const URL = window.URL || window.webkitURL
         if (URL) {
-            URL.revokeObjectURL(state.imgUrl)
+            URL.revokeObjectURL(imgUrl.value)
         }
       }
       return {
@@ -268,6 +283,10 @@ export default defineComponent({
           icons,
           save,
           removeUrl,
+          iconList,
+          nowTab,
+          imgUrl,
+          saveoption,
           ...toRefs(state)
       }
   }
