@@ -12,7 +12,8 @@
             </ion-segment>
         </ion-toolbar>
     </ion-header>
-    <ion-content v-if="nowTab==='poster'">
+    <template v-if="nowTab==='poster'">
+    <ion-content v-if="resImg===''">
         <ion-item lines>
             <ion-label>边框：</ion-label>
             <ion-select :style="'background:'+boColor" @ionChange="boColor=$event.detail.value" :value="boColor" placeholder="颜色">
@@ -98,8 +99,8 @@
                 <ion-input @ionChange="name=$event.detail.value" placeholder="请输入店铺名"/>
             </ion-item>
         <div id="board" class="background" :style="'background:'+boColor">
-            <ion-card class="card" :style="'--background:'+bColor+';border-radius:'+radius+'px'">
-                <img :style="{opacity:opacity}" @load="removeUrl" v-if="imgUrl" class="cardPic" :src="imgUrl"/>
+            <ion-card  class="card" :style="'--background:'+bColor+';border-radius:'+radius+'px'">
+                <img :style="{opacity:opacity}" @load="removeUrl(imgUrl)" v-if="imgUrl" class="cardPic" :src="imgUrl"/>
                 <ion-card-header class="cardHeader">
                     <ion-card-title>
                         <h1 :style="'font-family:\''+tFont+'\',sans-serif;color:'+tColor+';font-size:'+tSize+'px;'+(tShadow?'text-shadow:2px 2px 3px #8696a7;':'')+(tWeight?'font-weight: bold;':'')">{{title}}</h1>
@@ -108,16 +109,32 @@
                 <ion-card-content>
                     <ion-label :style="'height:'+cSize*1.6+'px'" v-for="(item,idx) in list" :key="idx" ><h2 :style="'font-family:'+cFont+';color:'+cColor+';font-size:'+cSize+'px'"><ion-icon style="margin-right:0.4em" :icon="iconList[icon]"/>{{item}}</h2></ion-label>
                 </ion-card-content>
-                <div class="shuiyin">
-                    <img class="icon" src='http://62.60.131.37/shida.jpg'/>
+                <div class="shuiyin" style="opacity: 0.4">
+                    <img class="icon" src='@/image/shida.jpg'/>
                     <span style="position:absolute;left:80px;line-height:60px;white-space:nowrap">授权销售：{{name}}</span>
                 </div>
             </ion-card>
         </div>
     </ion-content>
+    <ion-content v-else>
+        <img @load="removeUrl(resImg)" :src="resImg"/>
+    </ion-content>
+    </template>
     <ion-footer>
-        <ion-item @click="saveoption" button color="primary">
-            <ion-title class="textC" >保存内容</ion-title>
+        <ion-row v-if="resImg===''">
+            <ion-col size="6">
+                <ion-item @click="generate" button color="primary">
+                    <ion-title class="textC" >生成图片</ion-title>
+                </ion-item>
+            </ion-col>
+            <ion-col size="6">
+                <ion-item @click="saveoption" button color="primary">
+                    <ion-title class="textC" >保存内容</ion-title>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-item v-else @click="resImg=''" button color="primary">
+            <ion-title class="textC" >返回</ion-title>
         </ion-item>
     </ion-footer>
 </ion-page>
@@ -144,29 +161,25 @@
 }
 .cardPic{
     position: absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right:0;
+    top:0px;
+    bottom:0px;
+    left:0px;
+    right:0px;
     height:340px;
     width:340px;
     object-fit: cover;
 }
 .icon{
-    margin:10px 20px;
-    height:40px;
-    width: 40px;
-    border-radius: 20px;
+    margin:10px 20px;height:40px;width: 40px;border-radius: 20px;
 }
 .shuiyin{
     position: absolute;
-    bottom:0;
-    right:0;
+    bottom:0px;
+    right:0px;
     width:100%;
     background:#fff;
     height:60px;
     color:#888;
-    opacity: 0.4;
     font-size:16px;
     font-style:italic;
     font-family: 'Monospace', sans-serif;
@@ -229,6 +242,7 @@ export default defineComponent({
       const state = reactive(stateObj)
       const nowTab=ref('poster')
       const imgUrl=ref('')
+      const resImg=ref('')
       const colors = [
           '#c1cbd7','#afb0b2','#969391','#bfbfbf','#8696a7','#9ca8b8','#fffaf4','#e0e5df','#b5c4b1','#ecacea','#7b8b6f','#e0cdcf','#b7b1a5','#965454','#faead3'
       ]
@@ -255,24 +269,37 @@ export default defineComponent({
           thumbsUpSharp
       }
       const chooseImg = (file: any)=>{
+        const reader = new FileReader();
+        reader.readAsDataURL(file.target.files[0]);
+        reader.onload = function (e: any) {
+            imgUrl.value = e.target.result;
+        };
+        /*
         const URL = window.URL || window.webkitURL
         if (URL) {
            imgUrl.value=URL.createObjectURL(file.target.files[0])
-        }
+        }*/
       }
-      const save = ()=>{
-        html2canvas(document.getElementById('board') as any).then(canvas => {
-            const a = document.createElement('a')
-            a.href =canvas.toDataURL("image/png");
-            a.download = '图片.png'
-            a.click()
-            a.remove()
+      const generate = ()=>{
+          const cloneDom = (document.getElementById('board') as any).cloneNode(true)
+        cloneDom.style.position = 'absolute'
+            cloneDom.style.top = '0px'
+            cloneDom.style.zIndex = '-1'
+            cloneDom.style.width = '400px'
+      document.body.appendChild(cloneDom)
+        html2canvas(cloneDom,{
+            useCORS:true,
+            proxy:'http://127.0.0.1/'
+        }).then(canvas => {
+            resImg.value =canvas.toDataURL("image/png");
+            document.body.removeChild(cloneDom)
         });
+        cloneDom.style.display = 'none'
       }
-      const removeUrl = ()=>{
+      const removeUrl = (url: string)=>{
         const URL = window.URL || window.webkitURL
         if (URL) {
-            URL.revokeObjectURL(imgUrl.value)
+            URL.revokeObjectURL(url)
         }
       }
       return {
@@ -281,7 +308,8 @@ export default defineComponent({
           sizes,
           fonts,
           icons,
-          save,
+          generate,
+          resImg,
           removeUrl,
           iconList,
           nowTab,

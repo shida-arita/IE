@@ -3,9 +3,6 @@
         <ion-header>
             <ion-toolbar>
                 <ion-item lines="none">
-                    <ion-button>
-                        上传数据
-                    </ion-button>
                     <ion-button @click="download">
                         <ion-spinner v-if="downloading"/>下载数据
                     </ion-button>

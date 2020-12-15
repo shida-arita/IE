@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from '@ionic/vue-router';
+import { createRouter, createWebHashHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,15 +12,19 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/pic',
     component: () => import('@/views/pic.vue'),
+  },
+  {
+    path: '/download',
+    component: () => import('@/views/download.vue'),
   }
 ]
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes
 })
 export function resetRouter() {
   const newRouter = createRouter({
-    history: createWebHistory(process.env.BASE_URL),
+    history: createWebHashHistory(process.env.BASE_URL),
     routes
   });
   (router as any).matcher = (newRouter as any).matcher
