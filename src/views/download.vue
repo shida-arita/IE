@@ -6,6 +6,24 @@
             </ion-toolbar>
         </ion-header>
         <ion-content>
+            
+                <ion-radio-group :value="way" @ionChange="way=$event.detail.value">
+                    <ion-row>
+                    <ion-col size="6">
+                        <ion-item lines="none">
+                            <ion-radio value="sentence"></ion-radio>
+                            <ion-label>按句子划分</ion-label>
+                        </ion-item>
+                    </ion-col>
+                    <ion-col size="6">
+                        <ion-item lines="none">
+                            <ion-radio value="entity"></ion-radio>
+                            <ion-label>按实体划分</ion-label>
+                        </ion-item>
+                    </ion-col>
+                    </ion-row>
+                </ion-radio-group>
+            
             <ion-item>
                 <ion-label slot="start">训练集</ion-label>
                 <ion-input @ionBlur="test=100-train" @ionChange="train=$event.detail.value;" :value="train" type="number" max="100" min="0"/>
@@ -38,14 +56,16 @@ export default defineComponent({
       const state = reactive({
           downloading:false,
           train:80,
-          test:20
+          test:20,
+          way:'sentence'
       })
       const download = async()=>{
           if (!state.downloading){
               state.downloading = true
               const res: any = await downEntity({
                   train:state.train,
-                  test:state.test
+                  test:state.test,
+                  way:state.way
               })
               state.downloading = false
               if (res.trainNum>0) {
