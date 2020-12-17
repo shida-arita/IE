@@ -41,10 +41,19 @@
                         <ion-item>
                             <ion-checkbox @ionChange="item.checked = $event.detail.checked" :checked="item.checked"/>
                             <ion-label>（{{item.entity1+','+item.entity2+','+item.label}}）</ion-label>
+                            <ion-buttons slot="end">
+                                <ion-button v-if="!item.edit" @click="item.edit = true" color="primary">编辑</ion-button>
+                                <template v-else>
+                                    <ion-button @click="item.edit = false">取消</ion-button>
+                                    <ion-button @click="save(item)" color="success">保存</ion-button>
+                                </template>
+                            </ion-buttons>
+                            
                         </ion-item>
                     </ion-card-header>
                     <ion-card-content>
-                        {{item.sentence}}
+                        <ion-textarea :value="item.sentence" autoGrow :disabled="!item.edit" @input="item.editEl=$event.target">
+                        </ion-textarea>
                     </ion-card-content>
                 </ion-card>
             </ion-list>
@@ -69,47 +78,51 @@
         <ion-footer v-if="!edit">
             <ion-toolbar>
                 <ion-item @click="start" v-if="inState===0 && entityList.length && url!=='' " lines="none" button>
-                    <ion-title  color="success" style="text-align:center">
+                    <ion-label  color="success" style="width:100%;text-align:center">
                         开始搜索
-                    </ion-title>
+                    </ion-label>
                 </ion-item>
                 <ion-item @click="stop" v-else-if="inState===1" lines="none" button>
-                    <ion-title color="danger" style="text-align:center">
-                        <ion-spinner/>停止搜索
-                    </ion-title>
+                    <ion-label color="danger" style="width:100%;text-align:center">
+                        <ion-spinner name="bubbles" style="vertical-align:middle"/>
+                        <ion-text style="vertical-align:middle">停止搜索</ion-text>
+                    </ion-label>
                 </ion-item>
                 <ion-row v-else-if="inState===2">
                     <ion-col v-if="searchPL<entityList.length" size="4">
                     <ion-item @click="start"  lines="none" button>
-                        <ion-title color="success" style="text-align:center">
+                        <ion-label color="success" style="width:100%;text-align:center">
                             继续搜索
-                        </ion-title>
+                        </ion-label>
                     </ion-item>
                     </ion-col>
                     <ion-col :size="searchPL<entityList.length?4:6">
                     <ion-item lines="none" button>
-                        <ion-title @click="add" color="primary" style="text-align:center">
+                        <ion-label @click="add" color="primary" style="width:100%;text-align:center">
                             添加选中
-                        </ion-title>
+                        </ion-label>
                     </ion-item>
                     </ion-col>
                     <ion-col :size="searchPL<entityList.length?4:6">
                     <ion-item @click="reset" lines="none" button>
-                        <ion-title color="medium" style="text-align:center">
+                        <ion-label color="medium" style="width:100%;text-align:center">
                             重新搜索
-                        </ion-title>
+                        </ion-label>
                     </ion-item>
                     </ion-col>
                 </ion-row>
                 <ion-item v-else-if="inState===3" lines="none" button>
-                    <ion-title color="primary" style="text-align:center">
-                        <ion-spinner/>保存中
-                    </ion-title>
+                    <ion-label color="primary" style="width:100%;text-align:center">
+                        <ion-spinner style="vertical-align:middle"/>
+                        <ion-text style="vertical-align:middle">
+                            保存中
+                        </ion-text>
+                    </ion-label>
                 </ion-item>
                 <ion-item @click="()=>{resultList=[];inState=2}" v-else-if="inState===4" lines="none" button>
-                    <ion-title color="success" style="text-align:center">
+                    <ion-label color="success" style="width:100%;text-align:center">
                         返回搜索界面
-                    </ion-title>
+                    </ion-label>
                 </ion-item>
             </ion-toolbar>
         </ion-footer>
@@ -130,7 +143,7 @@ export default defineComponent({
   setup() {
       const state = reactive({
           edit:false,
-          url:'https://baike.baidu.com/item/{entity}',
+          url:'https://www.baidu.com/s?wd={entity1} {entity2}',
           editContent:'',
           inState:0,
           stateInfo:'正在从数据库拉取实体对……',
@@ -141,6 +154,12 @@ export default defineComponent({
       })
       const handleInput=(e: any)=>{
          state.editContent=e.detail.value
+      }
+      const save = (item: any)=>{
+          if (item.editEl){
+              item.sentence=item.editEl.innerHTML
+          }
+          item.edit = false
       }
       const saveUrl=()=>{
         state.url=state.editContent
@@ -249,6 +268,7 @@ export default defineComponent({
           stop,
           reset,
           add,
+          save,
           ...toRefs(state)
       }
   }
