@@ -25,7 +25,8 @@ export const saveEntity=(data: any)=>request({
     method: 'post',
     data
   })
-  export const downEntity=()=>request({
+  export const downEntity=(params: any)=>request({
     url: "test.php",
-    method: 'get'
+    method: 'get',
+    params
   })

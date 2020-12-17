@@ -3,11 +3,10 @@
         <ion-header>
             <ion-toolbar>
                 <ion-item lines="none">
-                    <ion-button @click="download">
+                    <ion-button @click="toDownload">
                         <ion-spinner v-if="downloading"/>下载数据
                     </ion-button>
                     <ion-buttons slot="end" >
-                        <ion-button @click="toPic">Shida</ion-button>
                         <ion-button @click="toSearch"><ion-icon :icon="search" /></ion-button>
                     </ion-buttons>
                 </ion-item>
@@ -128,6 +127,9 @@ export default defineComponent({
       const toSearch=()=>{
           router.push('/search')
       }
+      const toDownload=()=>{
+          router.push('/download')
+      }
       const toPic=()=>{
           router.push('/pic')
       }
@@ -136,25 +138,6 @@ export default defineComponent({
           'E':'雇员',
           'L':'位置',
           'N':'无关系'
-      }
-      const download = async()=>{
-          if (!downloading.value){
-              downloading.value = true
-          const res: any = await downEntity()
-          downloading.value = false
-        const element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res));
-        element.setAttribute('download', 'train.txt');
-        
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        
-        element.click();
-        
-        document.body.removeChild(element);
-          }
-          
-
       }
       const save = (item: any)=>{
           if (item.editEl){
@@ -226,14 +209,14 @@ export default defineComponent({
           saving,
           saveData,
           labelChange,
-          download,
           downloading,
           history,
           goBack,
           map,
           search,
           toSearch,
-          toPic
+          toPic,
+          toDownload
       }
   }
 })

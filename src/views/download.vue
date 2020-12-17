@@ -16,7 +16,7 @@
                 <ion-input @ionBlur="train=100-test" @ionChange="test=$event.detail.value;" :value="test" type="number" max="100" min="0"/>
                 <ion-label  slot="end">%</ion-label>
             </ion-item>
-            <ion-button :disabled="downloading" expand="block">
+            <ion-button :disabled="downloading" expand="block" @click="download">
                 <ion-spinner v-if="downloading" name="bubbles"/>下载
             </ion-button>
         </ion-content>
@@ -40,7 +40,40 @@ export default defineComponent({
           train:80,
           test:20
       })
+      const download = async()=>{
+          if (!state.downloading){
+              state.downloading = true
+              const res: any = await downEntity({
+                  train:state.train,
+                  test:state.test
+              })
+              state.downloading = false
+              if (res.trainNum>0) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.train));
+                    element.setAttribute('download', 'train.txt');
+                    
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    
+                    element.click();
+              }
+              if (res.testNum>0) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.test));
+                    element.setAttribute('download', 'test.txt');
+                    
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    
+                    element.click();
+              }
+          }
+          
+
+      }
       return {
+          download,
           ...toRefs(state)
       }
   }
