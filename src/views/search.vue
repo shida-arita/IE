@@ -192,7 +192,7 @@ export default defineComponent({
           for (let i=0;i<state.resultList.length;i++) {
             const item: any=state.resultList[i]
             if (item.checked) {
-                  uploadList.push([item.entity1, item.entity2, item.label, item.sentence])
+                  uploadList.push([item.entity1, item.entity2, item.label, item.sentence, item.entity1T, item.entity2T])
             }
           }
           if (uploadList.length>0) {
@@ -227,7 +227,9 @@ export default defineComponent({
                                         entity2: item[1],
                                         label: item[2],
                                         sentence: arr[0].replace(/ /g,"").replace(/^[^0-9\u4e00-\u9fa5“]+/,"").replace(/[^0-9\u4e00-\u9fa5）》”]+$/,""),
-                                        checked: true
+                                        checked: true,
+                                        entity1T: item[3],
+                                        entity2T: item[4],
                                 })
                             }
                             arr = reg.exec(data)
