@@ -84,7 +84,7 @@ export default defineComponent({
               if (res.testNum>0) {
                     const element = document.createElement('a');
                     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.test));
-                    element.setAttribute('download', 'test.txt');
+                    element.setAttribute('download', 'test.txt'); 
                     
                     element.style.display = 'none';
                     document.body.appendChild(element);
