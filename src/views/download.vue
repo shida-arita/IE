@@ -37,6 +37,9 @@
             <ion-button :disabled="downloading" expand="block" @click="download">
                 <ion-spinner v-if="downloading" name="bubbles"/>下载
             </ion-button>
+            <ion-button :disabled="downloading" expand="block" @click="download2">
+                <ion-spinner v-if="downloading" name="bubbles"/>下载二
+            </ion-button>
         </ion-content>
     </ion-page>
 </template>
@@ -59,10 +62,43 @@ export default defineComponent({
           test:20,
           way:'sentence'
       })
+       const download2 = async()=>{
+          if (!state.downloading){
+              state.downloading = true
+              const res: any = await downEntity('ttest.php',{
+                  train:state.train,
+                  test:state.test,
+                  way:state.way
+              })
+              state.downloading = false
+              if (res.trainNum>0) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.train));
+                    element.setAttribute('download', 'train.txt');
+                    
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    
+                    element.click();
+              }
+              if (res.testNum>0) {
+                    const element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(res.test));
+                    element.setAttribute('download', 'test.txt');
+                    
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    
+                    element.click();
+              }
+          }
+          
+
+      }
       const download = async()=>{
           if (!state.downloading){
               state.downloading = true
-              const res: any = await downEntity({
+              const res: any = await downEntity('test.php',{
                   train:state.train,
                   test:state.test,
                   way:state.way
@@ -94,6 +130,7 @@ export default defineComponent({
       }
       return {
           download,
+          download2,
           ...toRefs(state)
       }
   }
