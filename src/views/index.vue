@@ -50,6 +50,14 @@
                     </ion-item>
                 </ion-card-content>
             </ion-card>
+            <ion-row>
+                <ion-col size="6">
+                    <ion-button expand="full" @click="enable">启用所有</ion-button>
+                </ion-col>
+                <ion-col size="6">
+                    <ion-button expand="full" @click="disable" color="primary">撤回所有</ion-button>
+                </ion-col>
+            </ion-row>
             <ion-list v-if="data">
 
                 <ion-card v-for="item in data.list" :key="item.ID">
@@ -164,6 +172,21 @@ export default defineComponent({
           }
           
       }
+      const enable = ()=>{
+        if (!data.value) return
+        const list=(data.value as any).list
+        for (let i=0;i<list.length;i++) {
+            list[i].valid=(data.value as any).flag[3]+1
+        }
+      }
+      const disable = ()=>{
+        if (!data.value) return
+        const list=(data.value as any).list
+        for (let i=0;i<list.length;i++) {
+            list[i].valid=(data.value as any).flag[3]+1
+        }
+          
+      }
       const getData = async()=>{
           const res: any = await getEntity({})
           saving.value=false;
@@ -216,7 +239,9 @@ export default defineComponent({
           search,
           toSearch,
           toPic,
-          toDownload
+          toDownload,
+          enable,
+          disable
       }
   }
 })
